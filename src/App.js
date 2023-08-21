@@ -8,13 +8,14 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [newBlog, setNewBlog] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+  const [notification, setNotification] = useState('')
+  const [newBlog, setNewBlog] = useState({
+    title: '',
+    author: '',
+    url: ''
+  })
 
   useEffect(() => {
     blogService.getAll().then(initialBlogs =>
@@ -49,7 +50,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -77,31 +78,29 @@ const App = () => {
       .create(blogObject)
         .then(returnedBlog => {
           setBlogs(blogs.concat(returnedBlog))
-          setNewBlog('')
+          setNewBlog({
+            title: '',
+            author: '',
+            url: ''
+          })
+          //console.log(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+          setErrorMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
         })
   }
 
   const handleBlogChange = (event) => {
-    setNewBlog(event.target.value)
-  }
+    const variableName = event.target.name
+    const newValue = event.target.value
 
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
+    //setNewBlog(event.target.value)
+    setNewBlog({...newBlog, [variableName]: newValue})
   }
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={errorMessage} />
+        <Notification message={errorMessage} notification={notification} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -131,29 +130,33 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={errorMessage} />
       <p>{user.name} logged in<button onClick={handleLogout}>Logout</button></p>
+      <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
           <label>Title: </label>
           <input
             type='text'
-            value={newTitle}
-            onChange={handleTitleChange}
+            value={newBlog.title}
+            name='title'
+            onChange={handleBlogChange}
           />
         </div>
         <div>
           <label>Author: </label>
           <input
             type='text'
-            value={newAuthor}
-            onChange={handleAuthorChange}
+            value={newBlog.author}
+            name='author'
+            onChange={handleBlogChange}
           />
         </div>
         <div>
           <label>Url: </label>
           <input
             type='text'
-            value={newUrl}
-            onChange={handleUrlChange}
+            value={newBlog.url}
+            name='url'
+            onChange={handleBlogChange}
           />
         </div>
         <button type='submit'>create</button>
