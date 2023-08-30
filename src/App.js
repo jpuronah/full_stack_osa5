@@ -23,6 +23,8 @@ const App = () => {
     url: ''
   })
 
+  const [sortedBlogs, setSortedBlogs] = useState([])
+
   const [loginVisible, setLoginVisible] = useState(false)
   const [newBlogVisible, setNewBlogVisible] = useState(false)
 
@@ -39,6 +41,13 @@ const App = () => {
       setBlogs( initialBlogs )
     )
   }, [])
+
+  useEffect(() => {
+    const sorted = [...blogs]
+
+    sorted.sort((a, b) => b.likes - a.likes)
+    setSortedBlogs(sorted)
+  }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -86,39 +95,6 @@ const App = () => {
     //globalUser = null
   }
 
-  const handleLike = async (blog) => {
-    console.log("HANDLE LIKE")
-    if (!blog) {
-      console.error("Blog is undefined")
-      return
-    }
-    try {
-      const updatedBlog = {
-        ...blog,
-        likes: blog.likes + 1
-      }
-      console.log(blog)
-      console.log(updatedBlog)
-      console.log("IIDEE", blog.id)
-      const response = await blogService.update(blog.id, updatedBlog)
-      console.log("responsedata", response);
-      //setBlogs(blogs.map(b => (b.id === blog.id ? response.data: b)))
-      console.log(response.id)
-      console.log(blog.id, response.id)
-      setBlogs((prevBlogs) => {
-        console.log(prevBlogs)
-        const updatedBlogs = prevBlogs.map((b) => 
-          b.id === blog.id ? response: b
-        )
-        console.log(updatedBlogs)
-        return updatedBlogs
-      })
-      } catch (error) {
-      console.error('Error adding like: ', error)
-    }
-    console.log("HANDLE LIKE")
-  }
-
   const addBlog = async (event) => {
     event.preventDefault()
     const blogObject = {
@@ -162,6 +138,57 @@ const App = () => {
 
     //setNewBlog(event.target.value)
     setNewBlog({...newBlog, [variableName]: newValue})
+  }
+
+  const handleLike = async (blog) => {
+    console.log("HANDLE LIKE")
+    if (!blog) {
+      console.error("Blog is undefined")
+      return
+    }
+    try {
+      const updatedBlog = {
+        ...blog,
+        likes: blog.likes + 1
+      }
+      console.log(blog)
+      console.log(updatedBlog)
+      console.log("IIDEE", blog.id)
+      const response = await blogService.update(blog.id, updatedBlog)
+      console.log("responsedata", response);
+      //setBlogs(blogs.map(b => (b.id === blog.id ? response.data: b)))
+      console.log(response.id)
+      console.log(blog.id, response.id)
+      setBlogs((prevBlogs) => {
+        console.log(prevBlogs)
+        const updatedBlogs = prevBlogs.map((b) => 
+          b.id === blog.id ? response: b
+        )
+        console.log(updatedBlogs)
+        return updatedBlogs
+      })
+      } catch (error) {
+        setErrorMessage(`error liking a blog`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+    }
+    console.log("HANDLE LIKE")
+  }
+
+  const handleDelete = async (id) => {
+    const blogToDelete = blogs.find((blog) => blog.id === id)
+    if (window.confirm(`Remove blog "${blogToDelete.title}" by "${blogToDelete.author}"`)) {
+      try {
+        await blogService.remove(id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+      } catch (error) {
+        setErrorMessage(`error deleting blog`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+      }
+    }
   }
 
   if (user === null) {
@@ -217,9 +244,13 @@ const App = () => {
       {console.log('Blog RENDER')}
       {console.log('BLoG', blogs)}
       
-      {blogs.filter(blog => blog)
+      {/*blogs.filter(blog => blog)
         .map(blog =>
           <Blog key={blog.id} blog={blog} user={user.username} handleLike={handleLike}/>
+      )*/}
+      {sortedBlogs.filter(blog => blog)
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} user={user.username} handleLike={handleLike} handleDelete={handleDelete}/>
       )}
       {/*blogs.map(blog =>
         blog ? (
@@ -228,7 +259,6 @@ const App = () => {
       )*/}
       {console.log('App return end')}
     </div>
-    
   )
 }
 
