@@ -24,6 +24,7 @@ const App = () => {
   })
 
   const [sortedBlogs, setSortedBlogs] = useState([])
+  const [newlyAddedBlog, setNewlyAddedBlog] = useState(null)
 
   const [loginVisible, setLoginVisible] = useState(false)
   const [newBlogVisible, setNewBlogVisible] = useState(false)
@@ -103,11 +104,30 @@ const App = () => {
       author: newBlog.author,
       user: user.username,
       likes: 0
-
     }
     console.log('USER adding blog', blogObject.user)
     console.log('AddBlog blogService')
-    blogService
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs([...blogs, returnedBlog])
+      setNewBlog({
+        title: '',
+        author: '',
+        url: ''
+      })
+      setNewlyAddedBlog(returnedBlog)
+      console.log(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+        setErrorMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+    } catch (error) {
+      setErrorMessage(`error adding blog`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+    }
+    /*blogService
       .create(blogObject)
         .then(returnedBlog => {
           //setBlogs(blogs.concat(returnedBlog))
@@ -129,7 +149,7 @@ const App = () => {
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
-        })
+        })*/
   }
 
   const handleBlogChange = (event) => {
@@ -142,23 +162,19 @@ const App = () => {
 
   const handleLike = async (blog) => {
     console.log("HANDLE LIKE")
-    if (!blog) {
-      console.error("Blog is undefined")
-      return
-    }
     try {
       const updatedBlog = {
         ...blog,
         likes: blog.likes + 1
       }
-      console.log(blog)
-      console.log(updatedBlog)
-      console.log("IIDEE", blog.id)
+      //console.log(blog)
+      //console.log(updatedBlog)
+      //console.log("IIDEE", blog.id)
       const response = await blogService.update(blog.id, updatedBlog)
-      console.log("responsedata", response);
+      //console.log("responsedata", response);
       //setBlogs(blogs.map(b => (b.id === blog.id ? response.data: b)))
-      console.log(response.id)
-      console.log(blog.id, response.id)
+      //console.log(response.id)
+      //console.log(blog.id, response.id)
       setBlogs((prevBlogs) => {
         console.log(prevBlogs)
         const updatedBlogs = prevBlogs.map((b) => 
@@ -250,7 +266,7 @@ const App = () => {
       )*/}
       {sortedBlogs.filter(blog => blog)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.username} handleLike={handleLike} handleDelete={handleDelete}/>
+          <Blog key={blog.id} blog={blog} user={user.username} handleLike={handleLike} handleDelete={handleDelete} newlyAddedBlog={newlyAddedBlog}/>
       )}
       {/*blogs.map(blog =>
         blog ? (

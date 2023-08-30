@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 
-const Blog = ({blog, user, handleLike, handleDelete}) => {
+const Blog = ({blog, user, handleLike, handleDelete, newlyAddedBlog}) => {
   const [expanded, setExpanded] = useState(false)
 
   console.log("BLOG COMPONENT")
@@ -31,13 +31,17 @@ const Blog = ({blog, user, handleLike, handleDelete}) => {
           <p>Author: {blog.author}</p>
           <p>
             Likes: {blog.likes}
+          </p>
             {console.log('PAINETAAN NAPPIA LIKELLE TÄÄLLÄ')}
             <button onClick={() => handleLike(blog)}>Like</button>
-          </p>
+          
           <p>User: {user}</p>
-          {user === blog.user.username && (
+          {user === blog.user || blog === newlyAddedBlog ? (
             <button onClick={() => handleDelete(blog.id)}>Remove</button>
-          )}
+          ) : null}
+          {/*) && (
+            <button onClick={() => handleDelete(blog.id)}>Remove</button>
+          )}*/}
           {/*<p>User: {blog.user.username}</p>*/}
           {/*<p>User: {blog.user}</p>*/}
         </div>
