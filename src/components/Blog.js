@@ -15,6 +15,8 @@ const Blog = ({blog, user, handleLike, handleDelete, newlyAddedBlog}) => {
     marginBottom: 5
   }
 
+  const removeButton = user && user.username === blog.user.username
+
   return (
     <div style={blogStyle}>
       {console.log('Blog return start')}
@@ -29,16 +31,19 @@ const Blog = ({blog, user, handleLike, handleDelete, newlyAddedBlog}) => {
           <p>Url: {blog.url}</p>
           <p>Title: {blog.title}</p>
           <p>Author: {blog.author}</p>
-          <p>
-            Likes: {blog.likes}
-          </p>
-            {console.log('PAINETAAN NAPPIA LIKELLE TÄÄLLÄ')}
+          <p> 
+            Likes: {blog.likes} 
             <button onClick={() => handleLike(blog)}>Like</button>
-          
+          </p>
+          {console.log('PAINETAAN NAPPIA LIKELLE TÄÄLLÄ')}
           <p>User: {user}</p>
-          {user === blog.user || blog === newlyAddedBlog ? (
+          <button onClick={() => handleDelete(blog.id)}>Remove</button>
+          {/*removeButton && (
             <button onClick={() => handleDelete(blog.id)}>Remove</button>
-          ) : null}
+          )*/}
+          {/*user === blog.user || blog === newlyAddedBlog ? (
+            <button onClick={() => handleDelete(blog.id)}>Remove</button>
+          ) : null*/}
           {/*) && (
             <button onClick={() => handleDelete(blog.id)}>Remove</button>
           )}*/}
