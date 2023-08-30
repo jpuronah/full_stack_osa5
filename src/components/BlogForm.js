@@ -1,5 +1,3 @@
-import React, { useState } from "react"
-
 const BlogForm = (props) => {
   return (
 	<form onSubmit={props.addBlog}>
