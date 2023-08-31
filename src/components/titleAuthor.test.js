@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import Blog from './Blog'
 
-test('renders content', () => {
+test('rendering works', () => {
   const blog = {
 	title: 'Testi Blogi',
 	author: 'Blogin Testaaja',
