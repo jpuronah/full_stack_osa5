@@ -69,7 +69,6 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     }
-    console.log('logging in with', username, password)
   }
 
   const handleLogout = () => {
@@ -158,8 +157,8 @@ const App = () => {
       handleSubmit={handleLogin}
       username={username}
       password={password}
-      handleUsernameChange={(e) => setUsername(e.target.value)}
-      handlePasswordChange={(e) => setPassword(e.target.value)}
+      handleUsernameChange={(event) => setUsername(event.target.value)}
+      handlePasswordChange={(event) => setPassword(event.target.value)}
     />
     )
   }

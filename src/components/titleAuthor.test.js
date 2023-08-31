@@ -12,7 +12,6 @@ test('renders content', () => {
   }
   
   render(<Blog blog={blog} />)
-  console.log('BLOGI', blog)
 
   const element = screen.getByText('Testi Blogi Blogin Testaaja')
   
