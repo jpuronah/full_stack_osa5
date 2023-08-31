@@ -1,7 +1,6 @@
 const LoginForm = (props) => {
 	return (
 		<div>
-		  {console.log("LoginForm")}
 		  <h2>Log in to application</h2>
 		  <props.Notification message={props.errorMessage} notification={props.notification} />
 		  <form onSubmit={props.handleSubmit}>
